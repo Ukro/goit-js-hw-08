@@ -2,7 +2,11 @@ import throttle from 'lodash.throttle';
 
 const formEl = document.querySelector('form');
 const STORAGE_KEY = 'feedback-form-state';
-const submitButton = document.querySelector('button[type="submit"]'); // Отримуємо кнопку submit
+const alertEl = document.createElement('div');
+alertEl.style.color = 'red';
+alertEl.style.display = 'none';
+alertEl.textContent = 'Дані не введено';
+formEl.appendChild(alertEl);
 
 changeInput();
 formEl.addEventListener('submit', onSubmitForm);
@@ -18,9 +22,6 @@ function onChangeLocalStorage(evt) {
 
   inputObj[evt.target.name] = evt.target.value;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(inputObj));
-
-  // Перевірка заповненості полів і активація / деактивація кнопки
-  checkFormCompletion();
 }
 
 function onSubmitForm(evt) {
@@ -28,11 +29,18 @@ function onSubmitForm(evt) {
   const formData = new FormData(formEl);
   const objSubmit = {};
   formData.forEach((value, name) => (objSubmit[name] = value));
-  console.log(objSubmit);
 
-  formEl.reset();
-  localStorage.removeItem(STORAGE_KEY);
-  submitButton.disabled = true; // Після відправки форми деактивуємо кнопку
+  // Проверка на незаполненные поля перед отправкой
+  const isEmptyField = Object.values(objSubmit).some(value => value.trim() === '');
+  if (isEmptyField) {
+    alertEl.style.display = 'block';
+  } else {
+    alertEl.style.display = 'none';
+    console.log(objSubmit);
+
+    formEl.reset();
+    localStorage.removeItem(STORAGE_KEY);
+  }
 }
 
 function changeInput() {
@@ -43,22 +51,4 @@ function changeInput() {
       formEl.elements[name].value = value;
     });
   }
-
-  // Перевірка заповненості полів і активація / деактивація кнопки
-  checkFormCompletion();
-}
-
-function checkFormCompletion() {
-  const formFields = formEl.elements;
-  let isFormComplete = true;
-
-  for (let i = 0; i < formFields.length; i++) {
-    const field = formFields[i];
-    if (field.type !== 'submit' && field.value.trim() === '') {
-      isFormComplete = false;
-      break;
-    }
-  }
-
-  submitButton.disabled = !isFormComplete;
 }
