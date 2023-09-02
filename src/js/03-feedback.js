@@ -30,7 +30,7 @@ function onSubmitForm(evt) {
   const objSubmit = {};
   formData.forEach((value, name) => (objSubmit[name] = value));
 
-  // Проверка на незаполненные поля перед отправкой
+  // перевірка полів
   const isEmptyField = Object.values(objSubmit).some(value => value.trim() === '');
   if (isEmptyField) {
     alertEl.style.display = 'block';
