@@ -2,12 +2,6 @@ import throttle from 'lodash.throttle';
 
 const formEl = document.querySelector('form');
 const STORAGE_KEY = 'feedback-form-state';
-const alertEl = document.createElement('div');
-alertEl.style.color = 'red';
-alertEl.style.display = 'none';
-alertEl.textContent = 'Дані не введено';
-formEl.appendChild(alertEl);
-
 changeInput();
 formEl.addEventListener('submit', onSubmitForm);
 formEl.addEventListener('input', throttle(onChangeLocalStorage, 500));
@@ -29,18 +23,10 @@ function onSubmitForm(evt) {
   const formData = new FormData(formEl);
   const objSubmit = {};
   formData.forEach((value, name) => (objSubmit[name] = value));
+  console.log(objSubmit);
 
-  // перевірка полів
-  const isEmptyField = Object.values(objSubmit).some(value => value.trim() === '');
-  if (isEmptyField) {
-    alertEl.style.display = 'block';
-  } else {
-    alertEl.style.display = 'none';
-    console.log(objSubmit);
-
-    formEl.reset();
-    localStorage.removeItem(STORAGE_KEY);
-  }
+  formEl.reset();
+  localStorage.removeItem(STORAGE_KEY);
 }
 
 function changeInput() {
