@@ -22,9 +22,21 @@ function onSubmitForm(evt) {
   evt.preventDefault();
   const formData = new FormData(formEl);
   const objSubmit = {};
-  formData.forEach((value, name) => (objSubmit[name] = value));
-  console.log(objSubmit);
+  let hasEmptyFields = false; //  флаг для перевірки наявності пустих полів
 
+  formData.forEach((value, name) => {
+    objSubmit[name] = value;
+    if (!value.trim()) { // Перевіряємо, чи поле не є пустим
+      hasEmptyFields = true;
+    }
+  });
+
+  if (hasEmptyFields) { // Якщо є пусті поля, показати Alert
+    alert("Дані не введено");
+    return;
+  }
+
+  console.log(objSubmit);
   formEl.reset();
   localStorage.removeItem(STORAGE_KEY);
 }
